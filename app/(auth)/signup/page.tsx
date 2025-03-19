@@ -60,7 +60,7 @@ export default function SignUp() {
 
       // Redirect to sign-in page after successful registration
       router.push('/signin?registered=true');
-    } catch (error) {
+    } catch (_) {
       setError('An unexpected error occurred. Please try again.');
       setIsLoading(false);
     }
