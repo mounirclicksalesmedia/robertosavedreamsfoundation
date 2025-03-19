@@ -199,7 +199,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">Zambia Office</h3>
                   <p className="text-gray-600">[Address to be approved]</p>
-                  <p className="text-gray-500 mt-1">Open Monday–Friday, 9 AM – 5 PM</p>
+                  <p className="text-gray-500 mt-1">Open Monday&ndash;Friday, 9 AM &ndash; 5 PM</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
@@ -212,7 +212,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">Angola Office</h3>
                   <p className="text-gray-600">[Address to be approved]</p>
-                  <p className="text-gray-500 mt-1">Open Monday–Friday, 9 AM – 5 PM</p>
+                  <p className="text-gray-500 mt-1">Open Monday&ndash;Friday, 9 AM &ndash; 5 PM</p>
                 </div>
               </div>
             </div>
@@ -230,7 +230,7 @@ export default function ContactPage() {
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
             <h2 className="text-2xl font-bold text-[#1D942C] mb-6 text-center">Send Us a Message</h2>
             <p className="text-gray-600 text-center mb-8">
-              Have a question or want to get involved? Fill out the form below and we'll get back to you as soon as possible.
+              Have a question or want to get involved? Fill out the form below and we&apos;ll get back to you as soon as possible.
             </p>
             {isSubmitted ? (
               <div className="max-w-2xl mx-auto bg-[#1D942C]/10 p-8 rounded-xl text-center">
@@ -241,7 +241,7 @@ export default function ContactPage() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Thank You!</h3>
                 <p className="text-gray-700 mb-6">
-                  Your message has been sent successfully. We'll get back to you as soon as possible.
+                  Your message has been sent successfully. We&apos;ll get back to you as soon as possible.
                 </p>
                 <button
                   onClick={() => setIsSubmitted(false)}
@@ -369,7 +369,7 @@ export default function ContactPage() {
                 { name: 'Instagram', icon: 'M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M6.5 19.5h11a3 3 0 003-3v-11a3 3 0 00-3-3h-11a3 3 0 00-3 3v11a3 3 0 003 3z' },
                 { name: 'Twitter', icon: 'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z' },
                 { name: 'LinkedIn', icon: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M2 4a2 2 0 114 0 2 2 0 01-4 0z' }
-              ].map((social, index) => (
+              ].map((social) => (
                 <div
                   key={social.name}
                   className="bg-gradient-to-br from-[#1D942C]/5 to-white rounded-xl p-6 text-center hover:shadow-lg transition-all duration-300 cursor-pointer group"

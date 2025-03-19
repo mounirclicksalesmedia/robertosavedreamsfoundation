@@ -48,7 +48,7 @@ export default function SignIn() {
 
       // Redirect to dashboard on successful sign-in
       router.push('/dashboard');
-    } catch (_) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
       setIsLoading(false);
     }
