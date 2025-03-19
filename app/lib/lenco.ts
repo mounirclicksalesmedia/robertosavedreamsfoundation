@@ -22,18 +22,19 @@ interface LencoPaymentRequest {
   metadata?: Record<string, any>;
 }
 
-interface LencoPaymentResponse {
+interface LencoResponse {
   status: boolean;
   message: string;
-  data: {
-    reference: string;
-    amount: number;
-    paymentUrl: string;
-    paymentReference: string;
-  };
+  data?: Record<string, unknown>;
 }
 
-export async function createPaymentLink(paymentData: LencoPaymentRequest): Promise<LencoPaymentResponse> {
+interface LencoError {
+  status: boolean;
+  message: string;
+  errors?: Record<string, string[]>;
+}
+
+export async function createPaymentLink(paymentData: LencoPaymentRequest): Promise<LencoResponse> {
   try {
     console.log('Creating payment link with Lenco:', {
       amount: paymentData.amount,
@@ -126,7 +127,7 @@ export async function createPaymentLink(paymentData: LencoPaymentRequest): Promi
   }
 }
 
-export async function verifyPayment(reference: string): Promise<any> {
+export async function verifyPayment(reference: string): Promise<LencoResponse> {
   try {
     console.log('Verifying payment with Lenco:', { reference });
     
@@ -196,4 +197,23 @@ export function formatAmount(amount: number, currency: string = 'USD'): string {
     currency: currency,
     minimumFractionDigits: 2
   }).format(amount);
+}
+
+export async function initializePayment(data: Record<string, unknown>): Promise<LencoResponse> {
+  try {
+    const response = await fetch(`${process.env.LENCO_API_URL}/payments/initialize`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.LENCO_SECRET_KEY}`
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result: LencoResponse = await response.json();
+    return result;
+  } catch (error) {
+    const err = error as LencoError;
+    throw new Error(err.message || 'Failed to initialize payment');
+  }
 } 
