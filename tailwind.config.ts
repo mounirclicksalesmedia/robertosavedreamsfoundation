@@ -39,8 +39,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        heebo: ['Heebo', 'sans-serif'],
-        caveat: ['Caveat', 'cursive'],
+        heebo: ['var(--font-heebo)', 'sans-serif'],
+        caveat: ['var(--font-caveat)', 'cursive'],
       },
     },
   },
