@@ -43,6 +43,23 @@ interface SuccessStoriesContent {
   };
 }
 
+interface SuccessStory {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  date: string;
+  author: string;
+}
+
+interface FormData {
+  title: string;
+  description: string;
+  image: string;
+  date: string;
+  author: string;
+}
+
 export default function SuccessStoriesEditor() {
   const [content, setContent] = useState<SuccessStoriesContent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +68,7 @@ export default function SuccessStoriesEditor() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     // Fetch content from our API

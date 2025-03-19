@@ -34,6 +34,25 @@ interface LencoError {
   errors?: Record<string, string[]>;
 }
 
+interface PaymentData {
+  amount: number;
+  currency: string;
+  reference: string;
+  email: string;
+  metadata?: Record<string, unknown>;
+}
+
+interface PaymentResponse {
+  status: boolean;
+  message: string;
+  data?: {
+    reference: string;
+    amount: number;
+    status: string;
+    [key: string]: unknown;
+  };
+}
+
 export async function createPaymentLink(paymentData: LencoPaymentRequest): Promise<LencoResponse> {
   try {
     console.log('Creating payment link with Lenco:', {
@@ -199,7 +218,7 @@ export function formatAmount(amount: number, currency: string = 'USD'): string {
   }).format(amount);
 }
 
-export async function initializePayment(data: Record<string, unknown>): Promise<LencoResponse> {
+export async function initializePayment(data: PaymentData): Promise<PaymentResponse> {
   try {
     const response = await fetch(`${process.env.LENCO_API_URL}/payments/initialize`, {
       method: 'POST',
@@ -210,10 +229,11 @@ export async function initializePayment(data: Record<string, unknown>): Promise<
       body: JSON.stringify(data)
     });
 
-    const result: LencoResponse = await response.json();
-    return result;
+    return await response.json();
   } catch (error) {
-    const err = error as LencoError;
-    throw new Error(err.message || 'Failed to initialize payment');
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('Failed to initialize payment');
   }
 } 
