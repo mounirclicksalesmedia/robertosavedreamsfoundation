@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma/client';
 import { ApplicationStatus } from '@prisma/client';
 
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
 // PATCH endpoint to update a loan application status
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, props: Props) {
   try {
-    const id = params.id;
+    const id = props.params.id;
     const body = await request.json();
     const { status } = body;
 
