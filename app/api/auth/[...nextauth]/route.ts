@@ -1,10 +1,11 @@
 // @ts-nocheck
 import NextAuth from 'next-auth';
+import type { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import prisma from '@/app/lib/prisma/client';
 
-const authOptions = {
+const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -74,5 +75,7 @@ const authOptions = {
   },
 };
 
-export const GET = NextAuth(authOptions).auth;
-export const POST = NextAuth(authOptions).auth; 
+const handler = NextAuth(authOptions);
+
+export const GET = handler;
+export const POST = handler; 
