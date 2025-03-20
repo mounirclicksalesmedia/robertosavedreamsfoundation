@@ -13,7 +13,7 @@ interface HomeContent {
     description: string;
     buttons: Array<{
       text: string;
-      href: string;
+      url: string;
       isPrimary: boolean;
     }>;
   };
@@ -72,130 +72,9 @@ interface HomeContent {
   };
 }
 
-interface Level {
-  amount: number;
-  label: string;
-}
-
-interface Hero {
-  title: string;
-  subtitle: string;
-  description: string;
-  buttons: Array<{
-    text: string;
-    href: string;
-  }>;
-}
-
-interface MissionVision {
-  title: string;
-  description: string;
-  mission: {
-    title: string;
-    description: string;
-  };
-  items: Array<{
-    title: string;
-    description: string;
-  }>;
-}
-
-interface Stat {
-  value: string;
-  label: string;
-  color: string;
-}
-
-interface Impact {
-  title: string;
-  description: string;
-  stats: Stat[];
-  items: Array<{
-    title: string;
-    description: string;
-  }>;
-}
-
-interface Testimonial {
-  quote: string;
-  author: string;
-  role: string;
-  image: string;
-}
-
-interface TestimonialsSection {
-  title: string;
-  description: string;
-  items: Testimonial[];
-}
-
-interface CTA {
-  title: string;
-  description: string;
-  buttonText: string;
-  buttonUrl: string;
-}
-
-interface DonateContent {
-  levels: Level[];
-  hero: Hero;
-  missionVision: MissionVision;
-  impact: Impact;
-  testimonials: TestimonialsSection;
-  cta: CTA;
-}
-
-const defaultLevels: Level[] = [
-  { amount: 10, label: 'Supporter' },
-  { amount: 25, label: 'Friend' },
-  { amount: 50, label: 'Champion' },
-  { amount: 100, label: 'Advocate' },
-  { amount: 250, label: 'Benefactor' },
-  { amount: 500, label: 'Patron' },
-  { amount: 1000, label: 'Visionary' }
-];
-
-const defaultTestimonials: Testimonial[] = [
-  {
-    quote: "The foundation's support changed my life. I was able to start my own business and provide for my family.",
-    author: "Sarah Johnson",
-    role: "Small Business Owner",
-    image: "/images/testimonials/sarah.jpg"
-  },
-  {
-    quote: "Thanks to the education program, I can now pursue my dreams of becoming a teacher.",
-    author: "Michael Banda",
-    role: "Student",
-    image: "/images/testimonials/michael.jpg"
-  }
-];
-
-const defaultHero: Hero = {
-  title: "Empowering Dreams<br/>Building Futures",
-  subtitle: "Together we can make a difference",
-  description: "The Roberto Save Dreams Foundation is dedicated to transforming lives through education, microloans, and sustainable development initiatives.",
-  buttons: [
-    {
-      text: "Donate Now",
-      href: "/donate"
-    },
-    {
-      text: "Learn More",
-      href: "/about"
-    }
-  ]
-};
-
-const defaultCTA: CTA = {
-  title: "Help Write the Next Success Story",
-  description: "Your support can help create more inspiring stories of transformation and empowerment across Africa.",
-  buttonText: "Make a Difference",
-  buttonUrl: "/donate"
-};
-
 export default function Home() {
   // Content state
-  const [content, setContent] = useState<DonateContent | null>(null);
+  const [content, setContent] = useState<HomeContent | null>(null);
   const [contentLoading, setContentLoading] = useState(true);
   
   // Loan calculator state
@@ -333,10 +212,10 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6"
-                    dangerouslySetInnerHTML={{ __html: content?.hero?.title || defaultHero.title }}
+                    dangerouslySetInnerHTML={{ __html: content?.hero.title || 'Empowering Dreams<br/>Building Futures' }}
                 />
                 <p className="text-xl md:text-2xl text-white leading-relaxed max-w-2xl mb-8">
-                  {content?.hero?.description || defaultHero.description}
+                  {content?.hero.description || 'The Roberto Save Dreams Foundation is dedicated to transforming lives through education, microloans, and sustainable development initiatives.'}
                 </p>
               </motion.div>
 
@@ -346,23 +225,18 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                {(content?.hero?.buttons || defaultHero.buttons).map((button: { text: string; href: string }, index: number) => {
-                  // Ensure we have a valid href
-                  const href = button.href || '/';
-                  return (
-                    <Link
-                      key={index}
-                      href={href}
-                      className={`${
-                        index === 0
-                          ? 'bg-[#1D942C] text-white hover:bg-[#167623]'
-                          : 'bg-white text-[#1D942C] hover:bg-[#1D942C]/10'
-                      } px-8 py-4 rounded-lg font-medium transition-colors duration-200`}
-                    >
-                      {button.text}
-                    </Link>
-                  );
-                })}
+                {content?.hero.buttons.map((button, index) => (
+                  <Link 
+                    key={index}
+                    href={button.url} 
+                    className={`px-8 py-4 ${button.isPrimary ? 
+                      'bg-[#ffc500] text-[#1D942C] font-bold' : 
+                      'bg-white text-[#1D942C] border-2 border-white'} 
+                      rounded-lg shadow-lg hover:bg-opacity-90 transform hover:-translate-y-1 transition-all duration-300 text-lg`}
+                  >
+                    {button.text}
+                  </Link>
+                ))}
               </motion.div>
             </motion.div>
 
@@ -550,7 +424,7 @@ export default function Home() {
                     A future where every woman and girl can rise above challenges and fulfill her potential.
                   </p>
                   <div className="space-y-4">
-                    {['Equal Opportunities', 'Economic Independence', 'Community Leadership'].map((item) => (
+                    {['Equal Opportunities', 'Economic Independence', 'Community Leadership'].map((item, index) => (
                       <div key={item} className="flex items-center space-x-3 group-hover:translate-x-1 transition-transform duration-300">
                         <div className="w-2 h-2 rounded-full bg-[#1D942C]" />
                         <span className="text-gray-700">{item}</span>
@@ -854,111 +728,184 @@ export default function Home() {
                 
                 {/* Preset Amounts */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-                  {(content?.levels || defaultLevels).map((level: Level) => (
+                  {[10, 25, 50, 100, 250, 500, 1000, 'Custom'].map((amount) => (
                     <button
-                      key={level.amount}
+                      key={amount}
                       type="button"
-                      onClick={() => handlePresetAmount(level.amount)}
+                      onClick={() => handlePresetAmount(amount)}
                       className={`py-3 px-4 rounded-lg border-2 transition-all duration-200 ${
-                        level.amount === donationAmount && customAmount === ''
+                        amount === donationAmount && customAmount === ''
                           ? 'border-[#1D942C] bg-[#1D942C]/10 text-[#1D942C] font-medium'
                           : 'border-gray-200 text-gray-700 hover:border-[#1D942C]/20'
                       }`}
                     >
-                      <span className="block text-2xl font-bold text-[#1D942C]">${level.amount}</span>
-                      <span className="text-sm text-gray-600">{level.label}</span>
+                      {amount === 'Custom' ? 'Custom' : `$${amount}`}
                     </button>
                   ))}
                 </div>
-              </div>
-              
-              {/* Custom Amount Input */}
-              <div className="mb-8">
-                <label htmlFor="customAmount" className="block text-sm font-medium text-gray-700 mb-2">
-                  Custom Amount
-                </label>
-                <div className="relative rounded-lg shadow-sm">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <span className="text-gray-500 sm:text-sm">$</span>
+                
+                {/* Custom Amount Input */}
+                <div className="mb-8">
+                  <label htmlFor="customAmount" className="block text-sm font-medium text-gray-700 mb-2">
+                    Custom Amount
+                  </label>
+                  <div className="relative rounded-lg shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                      <span className="text-gray-500 sm:text-sm">$</span>
+                    </div>
+                    <input
+                      type="text"
+                      name="customAmount"
+                      id="customAmount"
+                      value={customAmount}
+                      onChange={handleCustomAmountChange}
+                      className="block w-full rounded-lg border-gray-300 pl-7 pr-12 focus:border-[#1D942C] focus:ring-[#1D942C]"
+                      placeholder="0.00"
+                      aria-describedby="price-currency"
+                    />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                      <span className="text-gray-500 sm:text-sm" id="price-currency">USD</span>
+                    </div>
                   </div>
+                </div>
+                
+                {/* Donation Frequency */}
+                <div className="mb-8">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Donation Frequency
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setDonationFrequency('one-time')}
+                      className={`py-3 px-4 rounded-lg border-2 transition-all duration-200 ${
+                        donationFrequency === 'one-time'
+                          ? 'border-[#1D942C] bg-[#1D942C]/10 text-[#1D942C] font-medium'
+                          : 'border-gray-200 text-gray-700 hover:border-[#1D942C]/20'
+                      }`}
+                    >
+                      One-time
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDonationFrequency('monthly')}
+                      className={`py-3 px-4 rounded-lg border-2 transition-all duration-200 ${
+                        donationFrequency === 'monthly'
+                          ? 'border-[#1D942C] bg-[#1D942C]/10 text-[#1D942C] font-medium'
+                          : 'border-gray-200 text-gray-700 hover:border-[#1D942C]/20'
+                      }`}
+                    >
+                      Monthly
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Donation Slider */}
+                <div className="mb-8">
+                  <label htmlFor="donationSlider" className="block text-sm font-medium text-gray-700 mb-2">
+                    Donation Amount
+                  </label>
                   <input
-                    type="text"
-                    name="customAmount"
-                    id="customAmount"
-                    value={customAmount}
-                    onChange={handleCustomAmountChange}
-                    className="block w-full rounded-lg border-gray-300 pl-7 pr-12 focus:border-[#1D942C] focus:ring-[#1D942C]"
-                    placeholder="0.00"
-                    aria-describedby="price-currency"
+                    type="range"
+                    id="donationSlider"
+                    min="10"
+                    max="100000"
+                    step="10"
+                    value={donationAmount}
+                    onChange={(e) => {
+                      setDonationAmount(Number(e.target.value));
+                      setCustomAmount('');
+                    }}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#1D942C] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:bg-[#1D942C]"
                   />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <span className="text-gray-500 sm:text-sm" id="price-currency">USD</span>
+                  <div className="flex justify-between mt-2">
+                    <span className="text-sm text-gray-500">$10</span>
+                    <span className="text-lg font-semibold text-[#1D942C]">${donationAmount.toLocaleString()}</span>
+                    <span className="text-sm text-gray-500">$100k</span>
+                  </div>
+                </div>
+                
+                <button
+                  type="button"
+                  className="w-full py-4 px-6 bg-[#1D942C] text-white rounded-lg shadow-md hover:bg-[#167623] transition-colors duration-200 text-lg font-medium"
+                >
+                  {donationFrequency === 'one-time' ? 'Donate Now' : 'Start Monthly Donation'}
+                </button>
+              </div>
+              
+              <div className="lg:col-span-2 bg-gradient-to-br from-[#ffc500]/5 to-white rounded-xl p-6 border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Your Impact</h3>
+                
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 rounded-full bg-[#1D942C]/10 flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#1D942C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-900">${donationAmount < 50 ? donationAmount : 50} provides</p>
+                      <p className="text-sm text-gray-600">Educational supplies for {Math.max(1, Math.floor(donationAmount / 10))} students</p>
+                    </div>
+                  </div>
+                  
+                  {donationAmount >= 50 && (
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 rounded-full bg-[#ffc500]/10 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#ffc500]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                      </div>
+                      <div className="ml-4">
+                        <p className="text-sm font-medium text-gray-900">${donationAmount < 250 ? donationAmount : 250} provides</p>
+                        <p className="text-sm text-gray-600">
+                          {donationAmount >= 250 
+                            ? 'A microloan for a small business' 
+                            : 'Partial funding for a small business'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {donationAmount >= 250 && (
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 rounded-full bg-[#1D942C]/10 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#1D942C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      </div>
+                      <div className="ml-4">
+                        <p className="text-sm font-medium text-gray-900">${donationAmount < 1000 ? donationAmount : 1000} provides</p>
+                        <p className="text-sm text-gray-600">
+                          {donationAmount >= 1000 
+                            ? 'Clean water access for a community' 
+                            : 'Partial funding for clean water access'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#1D942C]" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <p className="ml-2 text-sm text-gray-600">100% of donations go directly to our programs</p>
+                  </div>
+                  
+                  <div className="flex items-center mt-2">
+                    <div className="flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#1D942C]" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <p className="ml-2 text-sm text-gray-600">Tax-deductible in the US, UK, and Nigeria</p>
                   </div>
                 </div>
               </div>
-              
-              {/* Donation Frequency */}
-              <div className="mb-8">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Donation Frequency
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setDonationFrequency('one-time')}
-                    className={`py-3 px-4 rounded-lg border-2 transition-all duration-200 ${
-                      donationFrequency === 'one-time'
-                        ? 'border-[#1D942C] bg-[#1D942C]/10 text-[#1D942C] font-medium'
-                        : 'border-gray-200 text-gray-700 hover:border-[#1D942C]/20'
-                    }`}
-                  >
-                    One-time
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDonationFrequency('monthly')}
-                    className={`py-3 px-4 rounded-lg border-2 transition-all duration-200 ${
-                      donationFrequency === 'monthly'
-                        ? 'border-[#1D942C] bg-[#1D942C]/10 text-[#1D942C] font-medium'
-                        : 'border-gray-200 text-gray-700 hover:border-[#1D942C]/20'
-                    }`}
-                  >
-                    Monthly
-                  </button>
-                </div>
-              </div>
-              
-              {/* Donation Slider */}
-              <div className="mb-8">
-                <label htmlFor="donationSlider" className="block text-sm font-medium text-gray-700 mb-2">
-                  Donation Amount
-                </label>
-                <input
-                  type="range"
-                  id="donationSlider"
-                  min="10"
-                  max="100000"
-                  step="10"
-                  value={donationAmount}
-                  onChange={(e) => {
-                    setDonationAmount(Number(e.target.value));
-                    setCustomAmount('');
-                  }}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#1D942C] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:bg-[#1D942C]"
-                />
-                <div className="flex justify-between mt-2">
-                  <span className="text-sm text-gray-500">$10</span>
-                  <span className="text-lg font-semibold text-[#1D942C]">${donationAmount.toLocaleString()}</span>
-                  <span className="text-sm text-gray-500">$100k</span>
-                </div>
-              </div>
-              
-              <button
-                type="button"
-                className="w-full py-4 px-6 bg-[#1D942C] text-white rounded-lg shadow-md hover:bg-[#167623] transition-colors duration-200 text-lg font-medium"
-              >
-                {donationFrequency === 'one-time' ? 'Donate Now' : 'Start Monthly Donation'}
-              </button>
             </div>
           </motion.div>
         </div>
@@ -994,7 +941,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Impact Stats */}
-            {content?.impact.stats.map((stat: Stat, index: number) => (
+            {content?.impact.stats.map((stat, index) => (
               <motion.div 
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
@@ -1259,7 +1206,7 @@ export default function Home() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
-            {(content?.testimonials?.items || defaultTestimonials).map((testimonial: Testimonial, index: number) => (
+            {content?.testimonials.items.map((testimonial, index) => (
               <motion.div 
                 key={index}
                 className="bg-white rounded-2xl shadow-lg overflow-hidden group"
@@ -1279,17 +1226,24 @@ export default function Home() {
                     <div className="flex items-center mb-6">
                       <div className="w-16 h-16 bg-[#1D942C]/10 rounded-full flex items-center justify-center mr-4">
                         <span className="text-xl font-bold text-[#1D942C]">
-                          {testimonial.author?.split(' ').map(name => name[0]).join('') || 'NA'}
+                          {testimonial.name.split(' ').map(name => name[0]).join('')}
                         </span>
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900">{testimonial.author}</h3>
+                        <h3 className="text-xl font-bold text-gray-900">{testimonial.name}</h3>
                         <p className="text-[#1D942C]">{testimonial.role}</p>
                       </div>
                     </div>
                     <p className="text-gray-700 mb-6 text-lg">
-                      &quot;{testimonial.quote}&quot;
+                      "{testimonial.quote}"
                     </p>
+                    <div className="flex mt-4">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <svg key={star} className="w-5 h-5 text-[#ffc500]" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -1341,30 +1295,31 @@ export default function Home() {
               />
             </div>
             <div className="relative z-10 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                {content?.cta?.title || defaultCTA.title}
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">{content?.cta.title || "Help Write the Next Success Story"}</h2>
               <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                {content?.cta?.description || defaultCTA.description}
+                {content?.cta.description || "Your support can help create more inspiring stories of transformation and empowerment across Africa."}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href={content?.cta?.buttonUrl || defaultCTA.buttonUrl}
-                  className="inline-flex items-center px-8 py-4 bg-[#1D942C] text-white rounded-lg font-medium hover:bg-[#167623] transition-colors duration-200"
-                >
-                  {content?.cta?.buttonText || defaultCTA.buttonText}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 ml-2"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+                {content?.cta.button ? (
+                  <Link 
+                    href={content.cta.button.url}
+                    className="inline-block bg-[#ffc500] text-[#1D942C] px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#ffd23d] transform hover:-translate-y-1 transition-all duration-300"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                    {content.cta.button.text}
+                  </Link>
+                ) : (
+                  <Link 
+                    href="/donate"
+                    className="inline-block bg-[#ffc500] text-[#1D942C] px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#ffd23d] transform hover:-translate-y-1 transition-all duration-300"
+                  >
+                    Make a Donation
+                  </Link>
+                )}
+                <Link 
+                  href="/get-involved"
+                  className="inline-block bg-white/10 backdrop-blur-md text-white border-2 border-white/30 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transform hover:-translate-y-1 transition-all duration-300"
+                >
+                  Get Involved
                 </Link>
               </div>
             </div>
