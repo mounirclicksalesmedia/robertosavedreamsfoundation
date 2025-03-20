@@ -14,22 +14,20 @@ const signInSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
-type SignInFormData = z.infer<typeof signInSchema>;
-
 export default function SignIn() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignInFormData>({
+  } = useForm({
     resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = async (data: SignInFormData) => {
+  const onSubmit = async (data) => {
     setIsLoading(true);
     setError(null);
 
@@ -40,7 +38,7 @@ export default function SignIn() {
         password: data.password,
       });
 
-      if (result?.error) {
+      if (!result?.ok) {
         setError('Invalid email or password');
         setIsLoading(false);
         return;
@@ -48,7 +46,9 @@ export default function SignIn() {
 
       // Redirect to dashboard on successful sign-in
       router.push('/dashboard');
-    } catch {
+      router.refresh();
+    } catch (error) {
+      console.error('Sign in error:', error);
       setError('An unexpected error occurred. Please try again.');
       setIsLoading(false);
     }
@@ -221,4 +221,4 @@ export default function SignIn() {
       </div>
     </motion.div>
   );
-}
+} 

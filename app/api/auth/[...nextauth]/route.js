@@ -1,11 +1,12 @@
-// @ts-nocheck
 import NextAuth from 'next-auth';
-import type { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import prisma from '@/app/lib/prisma/client';
 
-const authOptions: AuthOptions = {
+/**
+ * NextAuth.js configuration for Next.js App Router
+ */
+const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -43,15 +44,12 @@ const authOptions: AuthOptions = {
             role: user.role,
           };
         } catch (error) {
-          console.error('Error during authentication:', error);
+          console.error('Authentication error:', error);
           return null;
         }
       },
     }),
   ],
-  session: {
-    strategy: 'jwt',
-  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -62,20 +60,20 @@ const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.id = token.id;
+        session.user.role = token.role;
       }
       return session;
     },
   },
   pages: {
     signIn: '/signin',
-    signOut: '/',
     error: '/signin',
   },
-};
+  session: {
+    strategy: 'jwt',
+  },
+  debug: process.env.NODE_ENV === 'development',
+});
 
-const handler = NextAuth(authOptions);
-
-export const GET = handler;
-export const POST = handler; 
+export { handler as GET, handler as POST }; 
