@@ -5,10 +5,10 @@ import { ApplicationStatus } from '@prisma/client';
 // PATCH endpoint to update a loan application status
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const id = params.id;
+    const id = context.params.id;
     const body = await request.json();
     const { status } = body;
 

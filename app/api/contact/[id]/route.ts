@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/app/lib/prisma/client';
 
 // GET endpoint to retrieve a specific contact message by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
+    const { id } = context.params;
     
     const contact = await prisma.contact.findUnique({
       where: { id }
@@ -37,10 +37,10 @@ export async function GET(
 // PATCH endpoint to update contact message status
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
+    const { id } = context.params;
     const body = await request.json();
     const { status } = body;
     
@@ -88,10 +88,10 @@ export async function PATCH(
 // DELETE endpoint to remove a contact message
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
+    const { id } = context.params;
     
     // Check if contact exists
     const existingContact = await prisma.contact.findUnique({
