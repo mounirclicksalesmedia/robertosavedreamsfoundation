@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -29,6 +29,8 @@ interface SuccessStoriesContent {
     location: string;
     category: string;
     story: string;
+    fullStory?: string;
+    image?: string;
   }>;
   callToAction: {
     title: string;
@@ -44,10 +46,117 @@ interface SuccessStoriesContent {
   };
 }
 
+// Case Study Popup Component
+const CaseStudyPopup = ({ 
+  story, 
+  onClose 
+}: { 
+  story: SuccessStoriesContent['stories'][0] | null;
+  onClose: () => void;
+}) => {
+  if (!story) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{ type: "spring", damping: 25 }}
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="relative h-64 lg:h-80 w-full">
+            <Image
+              src={story.image || "/images/success-stories/default.jpg"}
+              alt={story.name}
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            <button 
+              onClick={onClose}
+              className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white/40 transition-colors duration-200"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="absolute bottom-0 left-0 p-6">
+              <span className="inline-block bg-[#ffc500]/80 backdrop-blur-sm text-[#1D942C] px-3 py-1 rounded-full text-sm font-medium mb-2">
+                {story.category}
+              </span>
+              <h3 className="text-2xl lg:text-3xl font-bold text-white">{story.name}</h3>
+              <p className="text-white/80">{story.location}</p>
+            </div>
+          </div>
+          
+          <div className="p-6 lg:p-8 overflow-y-auto max-h-[calc(90vh-20rem)]">
+            <div className="prose prose-lg max-w-none">
+              <p className="text-gray-700 mb-4 font-medium">
+                "{story.story}"
+              </p>
+              <div className="mt-6">
+                {story.fullStory ? (
+                  <div dangerouslySetInnerHTML={{ __html: story.fullStory }} />
+                ) : (
+                  <>
+                    <p className="text-gray-700 mb-4">
+                      When I first joined the microfinance program, I was struggling to support my family. With a small loan of $500, I was able to purchase supplies and start my own small business selling traditional crafts.
+                    </p>
+                    <p className="text-gray-700 mb-4">
+                      The business mentorship provided by the foundation was invaluable. I learned how to manage my finances, market my products, and build a sustainable enterprise. Within six months, I was able to hire two women from my community.
+                    </p>
+                    <p className="text-gray-700 mb-4">
+                      Today, my business supports not just my family, but creates opportunities for others as well. I've been able to send my children to school and even save for the future. I'm proud to say that I've repaid my loan in full, and now I'm planning to expand my business further.
+                    </p>
+                    <p className="text-gray-700 font-medium">
+                      The Roberto Save Dreams Foundation didn't just give me money – they gave me the skills and confidence to build a better future.
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div className="p-6 border-t border-gray-100 bg-gray-50">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-[#1D942C]/10 flex items-center justify-center mr-3">
+                  <svg className="w-5 h-5 text-[#1D942C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div className="text-sm text-gray-500">
+                  Success story from our {story.category} program
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="px-6 py-2 bg-[#1D942C] text-white rounded-lg hover:bg-[#167623] transition-colors duration-200"
+              >
+                Close Story
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
 export default function SuccessStoriesPage() {
   const [content, setContent] = useState<SuccessStoriesContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedStory, setSelectedStory] = useState<SuccessStoriesContent['stories'][0] | null>(null);
 
   useEffect(() => {
     async function fetchContent() {
@@ -57,6 +166,16 @@ export default function SuccessStoriesPage() {
           throw new Error('Failed to fetch content');
         }
         const data = await response.json();
+        
+        // Add sample full story data and images if not provided by API
+        if (data.stories) {
+          data.stories = data.stories.map((story: any, index: number) => ({
+            ...story,
+            fullStory: story.fullStory || null,
+            image: story.image || `/images/success-stories/story-${index + 1}.jpg`
+          }));
+        }
+        
         setContent(data);
       } catch (err) {
         console.error('Error fetching success stories content:', err);
@@ -68,6 +187,19 @@ export default function SuccessStoriesPage() {
 
     fetchContent();
   }, []);
+
+  // Add body overflow hidden when popup is open
+  useEffect(() => {
+    if (selectedStory) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedStory]);
 
   if (loading) {
     return (
@@ -259,15 +391,15 @@ export default function SuccessStoriesPage() {
                 <p className="text-gray-600 mb-4">{story.story}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">{story.location}</span>
-                  <Link
-                    href="#"
+                  <button
+                    onClick={() => setSelectedStory(story)}
                     className="text-[#1D942C] hover:text-[#167623] font-medium text-sm flex items-center space-x-1"
                   >
                     <span>Read More</span>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                  </Link>
+                  </button>
                 </div>
               </div>
             ))}
@@ -320,6 +452,14 @@ export default function SuccessStoriesPage() {
           </div>
         </motion.section>
       </div>
+
+      {/* Case Study Popup */}
+      {selectedStory && (
+        <CaseStudyPopup 
+          story={selectedStory} 
+          onClose={() => setSelectedStory(null)} 
+        />
+      )}
     </div>
   );
 }

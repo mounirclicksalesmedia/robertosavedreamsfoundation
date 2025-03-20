@@ -143,155 +143,9 @@ const WaveArrow = ({ isActive }: { isActive: boolean }) => (
   </motion.div>
 );
 
-// Loan Calculator Component
-const LoanCalculator = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const [loanAmount, setLoanAmount] = useState(1000);
-  const [loanTerm, setLoanTerm] = useState(12);
-  const [interestRate] = useState(4.68); // Fixed interest rate at 4.68%
-  const [monthlyPayment, setMonthlyPayment] = useState(0);
-  const [totalRepayment, setTotalRepayment] = useState(0);
-
-  useEffect(() => {
-    const monthlyRate = interestRate / 100 / 12;
-    const numPayments = loanTerm;
-    const monthlyPayment = 
-      loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numPayments) / 
-      (Math.pow(1 + monthlyRate, numPayments) - 1);
-    
-    setMonthlyPayment(isNaN(monthlyPayment) ? 0 : monthlyPayment);
-    setTotalRepayment(monthlyPayment * numPayments);
-  }, [loanAmount, loanTerm, interestRate]);
-
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50"
-            onClick={onClose}
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-2xl shadow-xl z-50 overflow-hidden"
-          >
-            <div className="p-6 bg-gradient-to-br from-[#3eb54d]/10 to-white">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-gray-900">Microloan Calculator</h3>
-                <button
-                  onClick={onClose}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  {/* Loan Amount Slider */}
-                  <div className="mb-8">
-                    <label htmlFor="loanAmount" className="block text-sm font-medium text-gray-700 mb-2">
-                      Loan Amount
-                    </label>
-                    <input
-                      type="range"
-                      id="loanAmount"
-                      min="100"
-                      max="5000"
-                      step="100"
-                      value={loanAmount}
-                      onChange={(e) => setLoanAmount(Number(e.target.value))}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#3eb54d]"
-                    />
-                    <div className="flex justify-between mt-2">
-                      <span className="text-sm text-gray-500">$100</span>
-                      <span className="text-lg font-semibold text-[#3eb54d]">${loanAmount.toLocaleString()}</span>
-                      <span className="text-sm text-gray-500">$5,000</span>
-                    </div>
-                  </div>
-
-                  {/* Loan Term Selector */}
-                  <div className="mb-8">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Loan Term (Months)
-                    </label>
-                    <div className="grid grid-cols-3 gap-3">
-                      {[6, 12, 24].map((months) => (
-                        <button
-                          key={months}
-                          type="button"
-                          onClick={() => setLoanTerm(months)}
-                          className={`py-2 px-4 rounded-lg border-2 ${
-                            months === loanTerm
-                              ? 'border-[#3eb54d] bg-[#3eb54d]/10 text-[#3eb54d] font-medium'
-                              : 'border-gray-200 text-gray-700 hover:border-[#3eb54d]/20'
-                          } transition-all duration-200`}
-                        >
-                          {months} months
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Interest Rate */}
-                  <div className="mb-8">
-                    <label htmlFor="interestRate" className="block text-sm font-medium text-gray-700 mb-2">
-                      Interest Rate
-                    </label>
-                    <div className="block w-full rounded-lg border border-gray-300 bg-white py-2 px-3 shadow-sm text-gray-700">
-                      4.68% (Fixed Rate)
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg p-6 shadow-inner">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Loan Summary</h4>
-                  
-                  <div className="space-y-4">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="text-sm text-gray-500">Monthly Repayment</p>
-                      <p className="text-2xl font-bold text-gray-900">${monthlyPayment.toFixed(2)}</p>
-                    </div>
-                    
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="text-sm text-gray-500">Total Repayment</p>
-                      <p className="text-2xl font-bold text-gray-900">${totalRepayment.toFixed(2)}</p>
-                    </div>
-                    
-                    <div className="bg-[#3eb54d]/10 p-4 rounded-lg">
-                      <p className="text-sm text-[#3eb54d]">Potential Impact</p>
-                      <p className="text-lg font-bold text-gray-900">
-                        This loan could help start or expand a small business, creating jobs and supporting local communities.
-                      </p>
-                    </div>
-                  </div>
-
-                  <Link
-                    href={`/loanapplication?amount=${loanAmount}&term=${loanTerm}`}
-                    className="w-full mt-6 px-6 py-3 bg-[#3eb54d] text-white rounded-md hover:bg-[#2d8a3a] transition-colors duration-200"
-                  >
-                    Apply for This Loan
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-};
-
 export default function ProgramsPage() {
   const [activeProgram, setActiveProgram] = useState<string | null>(null);
-  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
-
+  
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -374,16 +228,18 @@ export default function ProgramsPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-32"
+            transition={{ duration: 0.5 }}
+            className="mb-24"
           >
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-xl">
                 <Image
                   src="/images/programs/loan.jpeg"
                   alt="Women entrepreneurs"
                   fill
                   className="object-cover"
+                  loading="eager"
+                  priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur-sm rounded-lg p-4">
@@ -391,15 +247,15 @@ export default function ProgramsPage() {
                 </div>
               </div>
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                   Empowering Through Microloans
                 </h2>
-                <p className="text-lg text-gray-600 mb-8">
+                <p className="text-lg text-gray-600 mb-6">
                   Access to capital is one of the greatest barriers preventing women from achieving financial independence. 
                   Our microloan program provides affordable financing options coupled with comprehensive business development support.
                 </p>
-                <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                  <div className="bg-white rounded-xl p-6 shadow-md">
+                <div className="grid sm:grid-cols-2 gap-6 mb-6">
+                  <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
                     <div className="w-12 h-12 bg-[#3eb54d]/10 rounded-full flex items-center justify-center mb-4">
                       <svg className="w-6 h-6 text-[#3eb54d]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -408,7 +264,7 @@ export default function ProgramsPage() {
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">Financial Support</h3>
                     <p className="text-gray-600">Providing seed capital and expansion funding for sustainable business growth.</p>
                   </div>
-                  <div className="bg-white rounded-xl p-6 shadow-md">
+                  <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
                     <div className="w-12 h-12 bg-[#3eb54d]/10 rounded-full flex items-center justify-center mb-4">
                       <svg className="w-6 h-6 text-[#3eb54d]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -418,6 +274,12 @@ export default function ProgramsPage() {
                     <p className="text-gray-600">Training and mentorship to build successful enterprises.</p>
                   </div>
                 </div>
+                <Link
+                  href="/loanapplication"
+                  className="inline-block px-8 py-3 bg-[#3eb54d] text-white rounded-md hover:bg-[#2d8a3a] transition-colors duration-300 font-medium"
+                >
+                  Apply for a Loan
+                </Link>
               </div>
             </div>
           </motion.div>
@@ -709,17 +571,6 @@ export default function ProgramsPage() {
                   transition={{ duration: 0.2 }}
                   className="flex flex-col space-y-3"
                 >
-                  {program.id === 'microloans' && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsCalculatorOpen(true);
-                      }}
-                      className="w-full px-6 py-3 bg-[#3eb54d]/10 text-[#3eb54d] rounded-md hover:bg-[#3eb54d]/20 transition-colors duration-200 font-medium"
-                    >
-                      Calculate Loan Impact
-                    </button>
-                  )}
                   <Link
                     href={program.cta.link}
                     className="inline-block w-full text-center px-6 py-3 bg-[#3eb54d] text-white rounded-md hover:bg-[#2d8a3a] transition-colors duration-200"
@@ -802,12 +653,6 @@ export default function ProgramsPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Loan Calculator Modal */}
-      <LoanCalculator 
-        isOpen={isCalculatorOpen} 
-        onClose={() => setIsCalculatorOpen(false)} 
-      />
     </div>
   );
 }

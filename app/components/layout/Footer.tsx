@@ -74,13 +74,20 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 tracking-wider uppercase">Contact</h3>
             <ul className="mt-4 space-y-2">
               <li className="text-base text-gray-600">
-                <span className="font-medium">Email:</span> info@robertosavedreams.org
+                <span className="font-medium">Email:</span>{" "}
+                info@robertosavedreamsfoundation.org
               </li>
               <li className="text-base text-gray-600">
-                <span className="font-medium">Phone:</span> +1 (123) 456-7890
+                <span className="font-medium">Phone:</span>{" "}
+                +244 972 131 418
               </li>
               <li className="text-base text-gray-600">
-                <span className="font-medium">Address:</span> 123 Hope Street, City, Country
+                <span className="font-medium">Zambia:</span>{" "}
+                Plot 403, Masiye Mukobeko, Kabwe Central, Zambia.
+              </li>
+              <li className="text-base text-gray-600">
+                <span className="font-medium">Angola:</span>{" "}
+                Bairro Benfica, Rua 01, Zona Verde, Casa S/N, Município da Samba, Luanda, Angola.
               </li>
             </ul>
           </div>
