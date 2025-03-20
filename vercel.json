@@ -4,10 +4,14 @@
   "framework": "nextjs",
   "outputDirectory": ".next",
   "devCommand": "npm run dev",
+  "cleanUrls": true,
   "builds": [
     {
       "src": "package.json",
       "use": "@vercel/next"
     }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/$1" }
   ]
 } 

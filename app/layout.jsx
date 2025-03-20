@@ -4,6 +4,9 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import { Providers } from "./providers";
 
+// Force dynamic rendering to prevent issues with SessionProvider
+export const dynamic = 'force-dynamic';
+
 // Initialize fonts with weight configurations
 const heebo = Heebo({
   subsets: ['latin'],
