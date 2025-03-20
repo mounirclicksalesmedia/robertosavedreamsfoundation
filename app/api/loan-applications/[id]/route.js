@@ -1,32 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma/client';
-import { ApplicationStatus } from '@prisma/client';
-
-type Props = {
-  params: {
-    id: string;
-  };
-};
 
 // PATCH endpoint to update a loan application status
-export async function PATCH(request: NextRequest, props: Props) {
+export async function PATCH(request, { params }) {
   try {
-    const id = props.params.id;
+    const id = params.id;
     const body = await request.json();
     const { status } = body;
 
     // Map frontend status to database enum
-    let dbStatus: ApplicationStatus;
+    let dbStatus;
     switch (status) {
       case 'approved':
-        dbStatus = ApplicationStatus.APPROVED;
+        dbStatus = 'APPROVED';
         break;
       case 'rejected':
-        dbStatus = ApplicationStatus.REJECTED;
+        dbStatus = 'REJECTED';
         break;
       case 'pending':
       default:
-        dbStatus = ApplicationStatus.PENDING;
+        dbStatus = 'PENDING';
         break;
     }
 
