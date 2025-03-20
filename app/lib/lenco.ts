@@ -19,19 +19,13 @@ interface LencoPaymentRequest {
   phone?: string;
   reference: string;
   callbackUrl: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface LencoResponse {
   status: boolean;
   message: string;
   data?: Record<string, unknown>;
-}
-
-interface LencoError {
-  status: boolean;
-  message: string;
-  errors?: Record<string, string[]>;
 }
 
 interface PaymentData {

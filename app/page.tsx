@@ -424,7 +424,7 @@ export default function Home() {
                     A future where every woman and girl can rise above challenges and fulfill her potential.
                   </p>
                   <div className="space-y-4">
-                    {['Equal Opportunities', 'Economic Independence', 'Community Leadership'].map((item, index) => (
+                    {['Equal Opportunities', 'Economic Independence', 'Community Leadership'].map((item) => (
                       <div key={item} className="flex items-center space-x-3 group-hover:translate-x-1 transition-transform duration-300">
                         <div className="w-2 h-2 rounded-full bg-[#1D942C]" />
                         <span className="text-gray-700">{item}</span>
@@ -1235,7 +1235,7 @@ export default function Home() {
                       </div>
                     </div>
                     <p className="text-gray-700 mb-6 text-lg">
-                      "{testimonial.quote}"
+                      &ldquo;{testimonial.quote}&rdquo;
                     </p>
                     <div className="flex mt-4">
                       {[1, 2, 3, 4, 5].map((star) => (
