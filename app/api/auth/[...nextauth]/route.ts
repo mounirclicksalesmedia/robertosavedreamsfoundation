@@ -4,10 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import prisma from '@/app/lib/prisma/client';
 
-/**
- * Auth.js configuration for Next.js
- */
-const handler = NextAuth({
+const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -75,6 +72,8 @@ const handler = NextAuth({
     signOut: '/',
     error: '/signin',
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST }; 
