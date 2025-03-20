@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyPayment, formatAmount } from '@/app/lib/lenco';
 
+// Define types for payment data
+interface PaymentData {
+  status: string;
+  reference: string;
+  amount: number;
+  paidAt?: string;
+  [key: string]: any; // For additional properties
+}
+
 // Handle POST requests from Lenco webhook
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +29,11 @@ export async function POST(request: NextRequest) {
     const verificationResponse = await verifyPayment(reference);
 
     // Check if payment was successful
-    if (verificationResponse.status && verificationResponse.data.status === 'success') {
+    if (
+      verificationResponse?.status && 
+      verificationResponse?.data && 
+      verificationResponse.data.status === 'success'
+    ) {
       // Here you would update your database to mark the donation as completed
       console.log('Payment verified successfully via webhook:', {
         reference,
@@ -36,13 +49,13 @@ export async function POST(request: NextRequest) {
     } else {
       console.log('Payment verification failed via webhook:', {
         reference,
-        status: verificationResponse.data?.status || 'unknown'
+        status: verificationResponse?.data?.status || 'unknown'
       });
       
       return NextResponse.json({
         success: false,
         message: 'Payment verification failed',
-        data: verificationResponse.data
+        data: verificationResponse?.data || null
       });
     }
   } catch (error: any) {
@@ -80,7 +93,7 @@ export async function GET(request: NextRequest) {
         );
       }
       
-      const paymentData = verificationResponse.data;
+      const paymentData = verificationResponse.data as PaymentData;
       
       // Check if payment was successful
       if (paymentData.status !== 'success') {
