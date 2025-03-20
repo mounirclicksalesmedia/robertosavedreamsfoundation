@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-export default function DonationSuccessPage() {
+// Component that uses useSearchParams
+function DonationSuccessContent() {
   const searchParams = useSearchParams();
   const reference = searchParams.get('reference') || searchParams.get('trxref') || '';
   const [isLoading, setIsLoading] = useState(true);
@@ -158,5 +159,56 @@ export default function DonationSuccessPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+// Loading fallback
+function DonationSuccessLoading() {
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="relative h-[40vh] bg-gradient-to-br from-[#1D942C] to-[#167623] overflow-hidden">
+        <div className="absolute inset-0 bg-black/20" />
+        
+        <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+          <div className="text-center max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Thank You
+              <span className="block text-[#ffc500] mt-2">For Your Donation</span>
+            </h1>
+          </div>
+        </div>
+      </section>
+
+      {/* Loading Content */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-gray-100 animate-pulse">
+          <div className="flex justify-center">
+            <div className="w-20 h-20 bg-gray-200 rounded-full mb-6"></div>
+          </div>
+          <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-4"></div>
+          <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto mb-8"></div>
+          
+          <div className="h-32 bg-gray-200 rounded mb-8"></div>
+          
+          <div className="space-y-4 flex flex-col items-center">
+            <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+            <div className="flex space-x-4">
+              <div className="h-12 bg-gray-200 rounded w-32"></div>
+              <div className="h-12 bg-gray-200 rounded w-32"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main component with Suspense
+export default function DonationSuccessPage() {
+  return (
+    <Suspense fallback={<DonationSuccessLoading />}>
+      <DonationSuccessContent />
+    </Suspense>
   );
 } 

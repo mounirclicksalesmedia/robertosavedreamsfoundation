@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-export default function ThankYouPage() {
+// Component that uses useSearchParams
+function ThankYouContent() {
   const searchParams = useSearchParams();
   const reference = searchParams.get('reference');
   const [paymentDetails, setPaymentDetails] = useState<any>(null);
@@ -144,5 +145,54 @@ export default function ThankYouPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+// Loading fallback
+function ThankYouLoading() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white to-[#1D942C]/5 py-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 animate-pulse">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+            <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto"></div>
+          </div>
+          
+          <div className="bg-gray-100 rounded-xl p-6 mb-8">
+            <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+              </div>
+              <div className="flex justify-between">
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+              </div>
+              <div className="flex justify-between">
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-center space-x-4">
+            <div className="h-12 bg-gray-200 rounded w-32"></div>
+            <div className="h-12 bg-gray-200 rounded w-32"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main component with Suspense
+export default function ThankYouPage() {
+  return (
+    <Suspense fallback={<ThankYouLoading />}>
+      <ThankYouContent />
+    </Suspense>
   );
 } 
