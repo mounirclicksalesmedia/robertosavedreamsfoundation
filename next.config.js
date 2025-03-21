@@ -1,9 +1,9 @@
-// next.config.js
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  // Core settings only
+  // Core settings
   reactStrictMode: true,
+  
   // Ignore ESLint and TypeScript errors in production
   eslint: {
     ignoreDuringBuilds: true,
@@ -11,7 +11,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Update to remotePatterns instead of domains
+
+  // Update to remotePatterns for images
   images: {
     remotePatterns: [
       {
@@ -20,41 +21,44 @@ const nextConfig = {
       },
     ],
   },
-  // Configure Turbopack
-  experimental: {
-    turbo: {
-      resolveAlias: {
-        // Add module aliases if needed in the future
-      },
-      rules: {
-        // Add any specific Turbopack rules if needed
-      },
-    },
-  },
-  // Add webpack config to fix clientModules issue
+
+  // Webpack configuration to fix clientModules issue in Next.js 15.2.0
   webpack: (config, { isServer }) => {
-    // Only apply this fix for client-side bundles
     if (!isServer) {
-      // Make sure resolveOptions exists
-      if (!config.resolve) {
-        config.resolve = {};
-      }
-      
-      // Add clientModules to resolve options
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        path: false,
+      // Basic fallbacks and module resolution
+      config.resolve = {
+        ...config.resolve,
+        fallback: {
+          ...config.resolve?.fallback,
+          fs: false,
+          path: false,
+        }
       };
-      
-      // Ensure the modules field exists in resolve
-      if (!config.resolve.modules) {
-        config.resolve.modules = [];
+
+      // Ensure optimization configuration exists
+      if (!config.optimization) {
+        config.optimization = {};
       }
+
+      // Ensure splitChunks configuration exists
+      if (!config.optimization.splitChunks) {
+        config.optimization.splitChunks = {};
+      }
+
+      // Fix for clientModules issue by ensuring cacheGroups exist
+      config.optimization.splitChunks.cacheGroups = {
+        ...(config.optimization.splitChunks.cacheGroups || {}),
+        // This ensures clientModules property is defined
+        defaultVendors: {
+          name: 'vendor',
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true,
+        },
+      };
     }
-    
     return config;
-  }
+  },
 };
 
-module.exports = nextConfig;
+module.exports = nextConfig; 

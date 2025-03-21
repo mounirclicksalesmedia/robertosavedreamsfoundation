@@ -4,11 +4,10 @@ import { getToken } from 'next-auth/jwt';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
 
   // Check if the path starts with /dashboard
   if (pathname.startsWith('/dashboard')) {
-    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-
     // If the user is not authenticated, redirect to the sign-in page
     if (!token) {
       const url = new URL('/signin', request.url);
@@ -26,10 +25,16 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // If user is already authenticated and tries to access signin or signup pages
+  if ((pathname === '/signin' || pathname === '/signup') && token) {
+    // Redirect to dashboard
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
   return NextResponse.next();
 }
 
 // Configure the middleware to run only on specific paths
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/dashboard/:path*', '/signin', '/signup'],
 }; 
