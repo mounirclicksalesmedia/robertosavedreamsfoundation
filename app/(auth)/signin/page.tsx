@@ -14,20 +14,22 @@ const signInSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
-export default function SignIn() {
+type SignInFormData = z.infer<typeof signInSchema>;
+
+export default function SignIn(): React.ReactNode {
   const router = useRouter();
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: SignInFormData): Promise<void> => {
     setIsLoading(true);
     setError(null);
 
