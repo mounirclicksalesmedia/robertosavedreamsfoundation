@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
 
 const nextConfig = {
   // Core settings
@@ -24,43 +25,43 @@ const nextConfig = {
 
   // Webpack configuration to fix clientModules issue in Next.js 15.2.0
   webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // Basic fallbacks and module resolution
-      config.resolve = {
-        ...config.resolve,
-        fallback: {
-          ...config.resolve?.fallback,
-          fs: false,
-          path: false,
-        },
-        alias: {
-          ...config.resolve?.alias,
-          '@': '.',
-        }
-      };
-
-      // Ensure optimization configuration exists
-      if (!config.optimization) {
-        config.optimization = {};
+    // Basic fallbacks and module resolution
+    config.resolve = {
+      ...config.resolve,
+      fallback: {
+        ...config.resolve?.fallback,
+        fs: false,
+        path: false,
+      },
+      alias: {
+        ...config.resolve?.alias,
+        '@': path.resolve(__dirname),
+        '@/lib': path.resolve(__dirname, 'app/lib')
       }
+    };
 
-      // Ensure splitChunks configuration exists
-      if (!config.optimization.splitChunks) {
-        config.optimization.splitChunks = {};
-      }
-
-      // Fix for clientModules issue by ensuring cacheGroups exist
-      config.optimization.splitChunks.cacheGroups = {
-        ...(config.optimization.splitChunks.cacheGroups || {}),
-        // This ensures clientModules property is defined
-        defaultVendors: {
-          name: 'vendor',
-          test: /[\\/]node_modules[\\/]/,
-          priority: -10,
-          reuseExistingChunk: true,
-        },
-      };
+    // Ensure optimization configuration exists
+    if (!config.optimization) {
+      config.optimization = {};
     }
+
+    // Ensure splitChunks configuration exists
+    if (!config.optimization.splitChunks) {
+      config.optimization.splitChunks = {};
+    }
+
+    // Fix for clientModules issue by ensuring cacheGroups exist
+    config.optimization.splitChunks.cacheGroups = {
+      ...(config.optimization.splitChunks.cacheGroups || {}),
+      // This ensures clientModules property is defined
+      defaultVendors: {
+        name: 'vendor',
+        test: /[\\/]node_modules[\\/]/,
+        priority: -10,
+        reuseExistingChunk: true,
+      },
+    };
+
     return config;
   },
 };

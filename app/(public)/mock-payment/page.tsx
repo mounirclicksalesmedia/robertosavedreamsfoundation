@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { formatAmount } from '@/app/lib/lenco';
+import { formatAmount } from '../../../lib/lenco';
 
 // SearchParams component that uses the hook
 function PaymentContent() {
