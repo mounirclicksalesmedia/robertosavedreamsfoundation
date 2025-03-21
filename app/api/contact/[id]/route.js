@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../lib/prisma/client';
+import prisma from '@/app/lib/prisma/client';
 
 // GET endpoint to retrieve a specific contact message by ID
 export async function GET(request, { params }) {
